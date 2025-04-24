@@ -1,10 +1,10 @@
 module Color where
 
 red :: String
-red = "\x1b[31m"
+red = "\x1b[91m"
 
 blue :: String
-blue = "\x1b[34m"
+blue = "\x1b[94m"
 
 reset :: String
 reset = "\x1b[0m"

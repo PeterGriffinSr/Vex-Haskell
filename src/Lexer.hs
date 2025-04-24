@@ -30,6 +30,14 @@ lexer filename fullSrc (c : cs) line col
       _ -> addToken TokDiv cs 1
   | c == '(' = addToken TokLParen cs 1
   | c == ')' = addToken TokRParen cs 1
+  | c == '[' = addToken TokLBracket cs 1
+  | c == ']' = addToken TokRBracket cs 1
+  | c == '{' = addToken TokLBrace cs 1
+  | c == '}' = addToken TokRBrace cs 1
+  | c == '_' = addToken TokUnderScore cs 1
+  | c == '.' = case cs of
+      ('.' : '.' : rest) -> addToken TokSpread rest 3
+      _ -> addToken TokDot cs 1
   | c == ':' = addToken TokColon cs 1
   | c == ';' = addToken TokSemi cs 1
   | c == '=' = case cs of
@@ -70,6 +78,16 @@ lexIdent filename fullSrc cs line col =
   let (ident, rest) = span isAlpha cs
       tok = case ident of
         "val" -> TokVal
+        "fn" -> TokFn
+        "match" -> TokMatch
+        "with" -> TokWith
+        "if" -> TokIf
+        "then" -> TokThen
+        "else" -> TokElse
+        "None" -> TokNone
+        "Some" -> TokSome
+        "Ok" -> TokOk
+        "Error" -> TokError
         "int" -> TokInt
         "float" -> TokFloat
         "char" -> TokChar
@@ -78,7 +96,6 @@ lexIdent filename fullSrc cs line col =
         "true" -> TokBoolLit True
         "false" -> TokBoolLit False
         "print" -> TokPrint
-        "fn" -> TokFn
         _ -> TokIdent ident
    in do
         more <- lexer filename fullSrc rest line (col + length ident)

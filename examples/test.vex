@@ -1,2 +1,0 @@
-val (int, int) -> int: add fn (a, b) => 
-    "x + y;

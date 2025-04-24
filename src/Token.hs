@@ -7,7 +7,8 @@ data Token
   | TokFloatLit Double
   | TokCharLit Char
   | TokBoolLit Bool
-  | TokPlus
+  | ---
+    TokPlus
   | TokMinus
   | TokMul
   | TokDiv
@@ -20,7 +21,6 @@ data Token
   | TokRParen
   | TokColon
   | TokAssign
-  | TokVal
   | TokArrow
   | TokRArrow
   | TokEq
@@ -31,12 +31,31 @@ data Token
   | TokGreater
   | TokNot
   | TokComma
+  | TokLBracket
+  | TokRBracket
+  | TokLBrace
+  | TokRBrace
+  | TokUnderScore
+  | TokDot
+  | TokSpread
+  | ---
+    TokVal
+  | TokFn
   | TokInt
   | TokString
   | TokChar
   | TokFloat
   | TokBool
   | TokPrint
-  | TokFn
-  | TokEOF
+  | TokMatch
+  | TokWith
+  | TokIf
+  | TokThen
+  | TokElse
+  | TokNone
+  | TokSome
+  | TokOk
+  | TokError
+  | ---
+    TokEOF
   deriving (Show, Eq)

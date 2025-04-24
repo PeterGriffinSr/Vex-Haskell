@@ -10,7 +10,7 @@ prettyError filePath sourceCode line col errMsg =
    in unlines
         [ red ++ "error: " ++ reset ++ errMsg,
           blue ++ "    --> " ++ reset ++ filePath ++ ":" ++ show line ++ ":" ++ show col,
-          blue ++ "    |" ++ reset, 
+          blue ++ "    |" ++ reset,
           blue ++ "    |  " ++ reset ++ badLine,
           blue ++ "    |  " ++ red ++ caretLine ++ reset,
           blue ++ "    |" ++ reset
