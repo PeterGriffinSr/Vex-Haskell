@@ -1,12 +1,14 @@
 module Token where
 
 data Token = 
-    TokInt Int
+    TokIntLit Int
     | TokIdent String
-    | TokString String
-    | TokFloat Double
-    | TokPlus | TokMinus | TokMul | TokDiv
-    | TokLParen | TokRParen
-    | TokAssign | TokLet | TokIn | TokEq
+    | TokStringLit String
+    | TokFloatLit Double
+    | TokCharLit Char
+    | TokBoolLit Bool
+    | TokPlus | TokMinus | TokMul | TokDiv | TokSemi
+    | TokLParen | TokRParen | TokColon
+    | TokAssign | TokVal | TokInt | TokString | TokChar | TokFloat | TokBool
     | TokEOF
     deriving (Show, Eq)
