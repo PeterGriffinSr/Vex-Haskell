@@ -1,8 +1,7 @@
 module Main where
 
-import System.Environment (getArgs)
-import System.IO ()
 import Lexer
+import System.Environment (getArgs)
 
 main :: IO ()
 main = do
@@ -10,6 +9,7 @@ main = do
   case args of
     [fileName] -> do
       src <- readFile fileName
-      let tokens = lexer src
-      mapM_ print tokens
+      case lexer fileName src src 1 1 of
+        Left err -> putStrLn err
+        Right tokens -> mapM_ print tokens
     _ -> putStrLn "Usage: Vex <filename>"

@@ -1,67 +1,106 @@
--- Lexer.hs
 module Lexer (lexer) where
 
-import Token
 import Data.Char
+import Error (prettyError)
+import Token
 
-lexer :: String -> [Token]
-lexer [] = [TokEOF]
-lexer (c:cs)
-    | isSpace c       = lexer cs
-    | isDigit c       = lexNumber (c:cs)
-    | isAlpha c       = lexIdent (c:cs)
-    | c == '"'        = lexString cs
-    | c == '\''       = lexChar cs
-    | c == '#'        = lexComment cs
-    | c == '-'        = TokMinus : lexer cs
-    | c == '+'        = TokPlus  : lexer cs
-    | c == '*'        = TokMul   : lexer cs
-    | c == '/'        = TokDiv   : lexer cs
-    | c == '('        = TokLParen : lexer cs
-    | c == ')'        = TokRParen : lexer cs
-    | c == ':'        = TokColon : lexer cs
-    | c == ';'        = TokSemi : lexer cs
-    | c == '='        = TokAssign : lexer cs
-    | otherwise       = error ("Unrecognized character: " ++ [c])
+lexer :: String -> String -> String -> Int -> Int -> Either String [Token]
+lexer filename fullSrc [] _ _ = Right [TokEOF]
+lexer filename fullSrc (c : cs) line col
+  | isSpace c = case c of
+      '\n' -> lexer filename fullSrc cs (line + 1) 1
+      _ -> lexer filename fullSrc cs line (col + 1)
+  | isDigit c = lexNumber filename fullSrc (c : cs) line col
+  | isAlpha c = lexIdent filename fullSrc (c : cs) line col
+  | c == '"' = lexString filename fullSrc cs line col
+  | c == '\'' = lexChar filename fullSrc cs line col
+  | c == '#' = lexComment filename fullSrc cs line
+  | c == '-' = case cs of
+      ('>' : rest) -> addToken TokArrow rest 2
+      ('.' : rest) -> addToken ToKFMinus rest 2
+      _ -> addToken TokMinus cs 1
+  | c == '+' = case cs of
+      ('.' : rest) -> addToken TokFPlus rest 2
+      _ -> addToken TokPlus cs 1
+  | c == '*' = case cs of
+      ('.' : rest) -> addToken TokFMul rest 2
+      _ -> addToken TokMul cs 1
+  | c == '/' = case cs of
+      ('.' : rest) -> addToken TokFDiv rest 2
+      _ -> addToken TokDiv cs 1
+  | c == '(' = addToken TokLParen cs 1
+  | c == ')' = addToken TokRParen cs 1
+  | c == ':' = addToken TokColon cs 1
+  | c == ';' = addToken TokSemi cs 1
+  | c == '=' = case cs of
+      ('>' : rest) -> addToken TokRArrow rest 2
+      ('=' : rest) -> addToken TokEq rest 2
+      _ -> addToken TokAssign cs 1
+  | c == '!' = case cs of
+      ('=' : rest) -> addToken TokNeq rest 2
+      _ -> addToken TokNot cs 1
+  | c == '<' = case cs of
+      ('=' : rest) -> addToken TokLeq rest 2
+      _ -> addToken TokLess cs 1
+  | c == '>' = case cs of
+      ('=' : rest) -> addToken TokGeq rest 2
+      _ -> addToken TokGreater cs 1
+  | c == ',' = addToken TokComma cs 1
+  | otherwise = Left $ prettyError filename fullSrc line col "Unexpected character"
+  where
+    addToken tok rest offset = do
+      more <- lexer filename fullSrc rest line (col + offset)
+      return (tok : more)
 
-lexNumber :: [Char] -> [Token]
-lexNumber cs =
-    let (numPart, rest) = span (\c -> isDigit c || c == '.') cs
-        dotCount = length (filter (=='.') numPart)
-    in case dotCount of
-        0 -> TokIntLit (read numPart) : lexer rest
-        1 -> TokFloatLit (read numPart) : lexer rest
-        _ -> error ("Invalid number with multiple dots: " ++ numPart)
+lexNumber :: String -> String -> String -> Int -> Int -> Either String [Token]
+lexNumber filename fullSrc cs line col =
+  let (numPart, rest) = span (\c -> isDigit c || c == '.') cs
+      dotCount = length (filter (== '.') numPart)
+   in case dotCount of
+        0 -> do
+          more <- lexer filename fullSrc rest line (col + length numPart)
+          return (TokIntLit (read numPart) : more)
+        1 -> do
+          more <- lexer filename fullSrc rest line (col + length numPart)
+          return (TokFloatLit (read numPart) : more)
+        _ -> Left $ "Invalid number with multiple dots: " ++ numPart ++ " at line " ++ show line ++ ", column " ++ show col
 
-lexIdent :: [Char] -> [Token]
-lexIdent cs =
-    let (ident, rest) = span isAlpha cs
-    in case ident of
-        "val"    -> TokVal : lexer rest
-        "int"    -> TokInt : lexer rest
-        "float"  -> TokFloat : lexer rest
-        "char"   -> TokChar : lexer rest
-        "bool"   -> TokBool : lexer rest
-        "string" -> TokString : lexer rest
-        "true"   -> TokBoolLit True : lexer rest
-        "false"  -> TokBoolLit False : lexer rest
-        _        -> TokIdent ident : lexer rest
+lexIdent :: String -> String -> String -> Int -> Int -> Either String [Token]
+lexIdent filename fullSrc cs line col =
+  let (ident, rest) = span isAlpha cs
+      tok = case ident of
+        "val" -> TokVal
+        "int" -> TokInt
+        "float" -> TokFloat
+        "char" -> TokChar
+        "bool" -> TokBool
+        "string" -> TokString
+        "true" -> TokBoolLit True
+        "false" -> TokBoolLit False
+        "print" -> TokPrint
+        "fn" -> TokFn
+        _ -> TokIdent ident
+   in do
+        more <- lexer filename fullSrc rest line (col + length ident)
+        return (tok : more)
 
-lexString :: [Char] -> [Token]
-lexString cs = 
-    let (str, rest) = span (/= '"') cs
-    in case rest of
-        ('"':rest') -> TokStringLit str : lexer rest'
-        _ -> error "Unterminated string literal"
+lexString :: String -> String -> String -> Int -> Int -> Either String [Token]
+lexString filename fullSrc cs line col =
+  let (str, rest) = span (/= '"') cs
+   in case rest of
+        ('"' : rest') -> do
+          more <- lexer filename fullSrc rest' line (col + length str + 2)
+          return (TokStringLit str : more)
+        _ -> Left $ prettyError filename fullSrc line col "Unterminated string"
 
-lexChar :: [Char] -> [Token]
-lexChar cs =
-    let (char, rest) = span (/= '\'') cs
-    in case rest of
-        ('\'':rest') -> TokCharLit (head char) : lexer rest'
-        _ -> error "Unterminated char literal"
+lexChar :: String -> String -> String -> Int -> Int -> Either String [Token]
+lexChar filename fullSrc cs line col =
+  let (char, rest) = span (/= '\'') cs
+   in case rest of
+        ('\'' : rest') -> do
+          more <- lexer filename fullSrc rest' line (col + length char + 2)
+          return (TokCharLit (head char) : more)
+        _ -> Left $ prettyError filename fullSrc line col "Unterminated character"
 
-
-lexComment :: [Char] -> [Token]
-lexComment cs =
-    lexer (dropWhile (/= '\n') cs)
+lexComment :: String -> String -> String -> Int -> Either String [Token]
+lexComment filename fullSrc cs line = lexer filename fullSrc (dropWhile (/= '\n') cs) (line + 1) 1

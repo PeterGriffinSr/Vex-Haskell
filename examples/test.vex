@@ -1,5 +1,2 @@
-val int: x = 10;
-val float: y = 1.4;
-val string: z = "Hello";
-val char: a = 'h';
-val bool: b = true;
+val (int, int) -> int: add fn (a, b) => 
+    "x + y;
