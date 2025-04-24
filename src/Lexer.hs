@@ -11,10 +11,11 @@ lexer (c:cs)
     | isDigit c       = lexNumber (c:cs)
     | isAlpha c       = lexIdent (c:cs)
     | c == '"'        = lexString cs
+    | c == '#'        = lexComment cs
     | c == '-'        = TokMinus : lexer cs
     | c == '+'        = TokPlus  : lexer cs
     | c == '*'        = TokMul   : lexer cs
-    | c == '/'        = lexCommentOrDiv cs
+    | c == '/'        = TokDiv   : lexer cs
     | c == '('        = TokLParen : lexer cs
     | c == ')'        = TokRParen : lexer cs
     | c == '='        = TokEq : lexer cs
@@ -44,8 +45,6 @@ lexString cs =
         ('"':rest') -> TokString str : lexer rest'
         _ -> error "Unterminated string literal"
 
-lexCommentOrDiv :: [Char] -> [Token]
-lexCommentOrDiv ('/':'/':rest) =
-    lexer (dropWhile (/= '\n') rest)
-lexCommentOrDiv cs =
-    TokDiv : lexer cs
+lexComment :: [Char] -> [Token]
+lexComment cs =
+    lexer (dropWhile (/= '\n') cs)

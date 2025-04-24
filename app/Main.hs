@@ -1,8 +1,15 @@
 module Main where
 
+import System.Environment (getArgs)
+import System.IO ()
 import Lexer
 
 main :: IO ()
 main = do
-    let code = "let x = 3.14\nin \"hi\" // comment\n"
-    print $ lexer code
+  args <- getArgs
+  case args of
+    [fileName] -> do
+      src <- readFile fileName
+      let tokens = lexer src
+      mapM_ print tokens
+    _ -> putStrLn "Usage: Vex <filename>"
