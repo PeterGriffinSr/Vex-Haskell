@@ -1,0 +1,54 @@
+module Help where
+
+import Data.Version (showVersion)
+import Paths_Vex (version)
+
+displayGeneral :: IO ()
+displayGeneral = do
+  putStrLn "Usage: vex [options] file..."
+  putStrLn "Options:"
+  putStrLn "  --help                   Display this information."
+  putStrLn "  --help={optimizers|warnings|target|compiler}[,...]"
+  putStrLn "                           Display help on specific option categories."
+  putStrLn "  --version                Display compiler version information."
+  putStrLn "  repl                     Launch the interactive Vex REPL (Read-Eval-Print Loop)."
+  putStrLn ""
+  putStrLn "Report bugs at <https://github.com/PeterGriffinSr/Vex/issues>"
+
+displayOptimizersHelp :: IO ()
+displayOptimizersHelp = do
+  putStrLn "Optimization Options:"
+  putStrLn "  -O0                      Disable all optimizations (default)."
+  putStrLn "  -O1                      Enable basic optimizations."
+  putStrLn "  -O2                      Enable additional optimizations."
+  putStrLn "  -O3                      Enable full optimizations, including inlining."
+  putStrLn "  -Os                      Optimize for size."
+  putStrLn "  -Ofast                   Enable aggressive optimizations that may break strict standards compliance."
+
+displayWarningsHelp :: IO ()
+displayWarningsHelp = do
+  putStrLn "Warning Control Options:"
+  putStrLn "  -Wall                   Enable most warnings."
+  putStrLn "  -Werror                 Treat warnings as errors."
+  putStrLn "  -Wno-unused             Disable warnings for unused variables or functions."
+  putStrLn "  -Wextra                 Enable extra warning checks."
+
+displayTargetHelp :: IO ()
+displayTargetHelp = do
+  putStrLn "Target-Specific Options:"
+  putStrLn "  --target=<platform>     Specify the target platform (e.g., linux, wasm, arm)."
+  putStrLn "  --arch=<arch>           Specify the target architecture (e.g., x86_64, arm64)."
+  putStrLn "  --emit-llvm             Output LLVM IR instead of native code."
+
+displayCompilerHelp :: IO ()
+displayCompilerHelp = do
+  putStrLn "Compiler Control Options:"
+  putStrLn "  -save-temps             Do not delete intermediate files (e.g., .ll, .s)."
+  putStrLn "  -S                      Compile only; do not assemble or link."
+  putStrLn "  -c                      Compile and assemble, but do not link."
+  putStrLn "  -o <file>               Place the output into <file>."
+  putStrLn "  --emit-ast              Output the parsed AST instead of compiling."
+  putStrLn "  --emit-ir               Output the intermediate representation (IR)."
+
+displayVersion :: IO ()
+displayVersion = putStrLn $ "Vex Compiler version: " ++ showVersion version

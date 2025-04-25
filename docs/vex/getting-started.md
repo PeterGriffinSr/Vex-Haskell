@@ -17,7 +17,9 @@ If you prefer building from source:
 
 ```
 git clone https://github.com/PeterGriffinSr/Vex.git
+
 cd vex
+
 cabal build
 ```
 Note: Ensure you have `cabal`, a GHC compiler (like `ghc`), installed.
