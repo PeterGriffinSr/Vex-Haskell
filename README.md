@@ -18,3 +18,14 @@ To start using Vex, follow these simple steps:
         0;
     ```
 3. **Explore the Documentation**: Check out the [Vex documentation](/docs/vex/getting-started.md) for detailed guides, tutorials, and API references.
+
+## Fully Supported
+| Architecture             | Linux | macOS | Windows |
+|--------------------------|:-----:|:-----:|:-------:|
+| `x86_64`                 | ✅    | ✅    | ✅      |
+| `x86`                    | ✅    | ⚠️    | ❌      |
+| `aarch64`                | ✅    | ✅    | ❌      |
+
+> ⚠️ macOS support for x86 is experimental and may not work as expected.
+> ❌ x86 builds on Windows are technically possible, but explicitly unsupported.
+> ❌ aarch64 builds on Windows are unsupported.
