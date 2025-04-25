@@ -6,6 +6,7 @@ Thumbs.db
 *~
 *#
 *.swp
+*.sh
 #*#
 
 # === Build system caches ===

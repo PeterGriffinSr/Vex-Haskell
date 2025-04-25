@@ -1,17 +1,9 @@
 cabal-version:   3.0
 name:            Vex
-
--- The package version.
--- See the Haskell package versioning policy (PVP) for standards
--- guiding when and how versions should be incremented.
--- https://pvp.haskell.org
--- PVP summary:     +-+------- breaking API changes
---                  | | +----- non-breaking API additions
---                  | | | +--- code changes with no API change
 version:         0.1.0.0
 synopsis:        A purely functional memory safe programming language
 description:
-  Vex is a modern, purely functional programming language designed with memory safety in mind. It provides a rich, statically-typed system, aiming for simplicity, expressiveness, and reliability. Vex enforces immutability and type safety, making it ideal for building safe, efficient systems without the risk of common memory errors.
+  Vex is a modern, purely functional programming language designed with memory safety in mind...
 
 license:         MIT
 license-file:    LICENSE
@@ -24,34 +16,12 @@ extra-doc-files:
   CHANGELOG.md
   README.md
 
-test-suite lexer-tests
-  type:             exitcode-stdio-1.0
-  hs-source-dirs:   test
-  main-is:          Spec.hs
-  build-depends:
-    , base                >= 4.17 && < 4.20
-    , hspec
-    , megaparsec
-    , parser-combinators
-    , Vex
-
-  default-language: Haskell2010
+source-repository head
+  type:     git
+  location: https://github.com/PeterGriffinSr/Vex
 
 common warnings
   ghc-options: -Wall
-
-executable Vex
-  import:           warnings
-  main-is:          Main.hs
-  build-depends:
-    , base                >= 4.17 && < 4.20
-    , hspec
-    , megaparsec
-    , parser-combinators
-    , Vex
-
-  hs-source-dirs:   app
-  default-language: Haskell2010
 
 library
   exposed-modules:
@@ -63,11 +33,38 @@ library
     Parser
     Token
 
+  autogen-modules:  Paths_Vex
   hs-source-dirs:   src
   build-depends:
-    , base                >= 4.17 && < 4.20
-    , megaparsec
-    , parser-combinators
+    , base                >=4.17 && <4.20
+    , megaparsec          >=9.7  && <10
+    , parser-combinators  >=1.3  && <2
 
   other-modules:    Paths_Vex
+  default-language: Haskell2010
+
+executable Vex
+  import:           warnings
+  main-is:          Main.hs
+  hs-source-dirs:   app
+  build-depends:
+    , base                >=4.17 && <4.20
+    , hspec               >=2.11 && <3
+    , megaparsec          >=9.7  && <10
+    , parser-combinators  >=1.3  && <2
+    , Vex
+
+  default-language: Haskell2010
+
+test-suite lexer-tests
+  type:             exitcode-stdio-1.0
+  main-is:          Spec.hs
+  hs-source-dirs:   test
+  build-depends:
+    , base                >=4.17 && <4.20
+    , hspec               >=2.11 && <3
+    , megaparsec          >=9.7  && <10
+    , parser-combinators  >=1.3  && <2
+    , Vex
+
   default-language: Haskell2010

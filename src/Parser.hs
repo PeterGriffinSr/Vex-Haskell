@@ -6,7 +6,6 @@ import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.Void
 import Error (prettyError)
 import Text.Megaparsec
-import Text.Megaparsec (ParseErrorBundle)
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 import Text.Megaparsec.Pos (sourceColumn, sourceLine)
@@ -109,7 +108,7 @@ pExpr :: Parser Expr
 pExpr = makeExprParser pTerm operatorTable
 
 parseExpr :: String -> String -> Either (ParseErrorBundle String Void) [Expr]
-parseExpr filePath src = parse (sc *> sepEndBy1 (pValDecl <|> pExpr) sc <* eof) filePath src
+parseExpr = parse (sc *> sepEndBy1 (pValDecl <|> pExpr) sc <* eof)
 
 handleParseError :: String -> String -> ParseErrorBundle String Void -> IO ()
 handleParseError filePath src err = do

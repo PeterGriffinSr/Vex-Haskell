@@ -3,15 +3,15 @@ module Error where
 import Color
 
 prettyError :: String -> String -> Int -> Int -> String -> String
-prettyError filePath sourceCode line col errMsg =
-  let codeLines = lines sourceCode
-      badLine = if line <= length codeLines then codeLines !! (line - 1) else ""
-      caretLine = replicate (col - 1) ' ' ++ "^"
+prettyError file src l c msg =
+  let ls = lines src
+      lineStr = if l <= length ls then ls !! (l - 1) else ""
+      caret = replicate (c - 1) ' ' ++ "^"
    in unlines
-        [ red ++ "error: " ++ reset ++ errMsg,
-          blue ++ "    --> " ++ reset ++ filePath ++ ":" ++ show line ++ ":" ++ show col,
+        [ red ++ "error: " ++ reset ++ msg,
+          blue ++ "    --> " ++ reset ++ file ++ ":" ++ show l ++ ":" ++ show c,
           blue ++ "    |" ++ reset,
-          blue ++ "    |  " ++ reset ++ badLine,
-          blue ++ "    |  " ++ red ++ caretLine ++ reset,
+          blue ++ "    |  " ++ reset ++ lineStr,
+          blue ++ "    |  " ++ red ++ caret ++ reset,
           blue ++ "    |" ++ reset
         ]

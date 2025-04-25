@@ -15,19 +15,50 @@ To install Vex, follow these steps:
 ### Building from Source
 If you prefer building from source:
 
-#### Step 1: Install GHC and Cabal
+#### Linux/Windows (x86_64)
 We recommend using `ghcup`, the official Haskell toolchain installer.
 
 Visit the official [ghcup website](https://www.haskell.org/ghcup/) and follow the installation guide.
 
-```
+once `ghcup` is installed:
+```bash
 git clone https://github.com/PeterGriffinSr/Vex.git
-
 cd vex
-
 cabal build
 ```
 
+#### Linux (i386)
+If you're on a 32-bit system, you can install the toolchain manually:
+
+##### Step 1: Install GHC
+Download and install GHC manually:
+```bash
+wget https://downloads.haskell.org/~ghc/9.6.7/ghc-9.6.7-i386-deb9-linux.tar.xz
+tar -xf ghc-9.6.7-i386-deb9-linux.tar.xz
+cd ghc-9.6.7
+./configure
+sudo make install
+```
+
+##### Step 2: Install Cabal
+```bash
+wget https://downloads.haskell.org/~cabal/Cabal-3.12.1.0/
+tar -xf Cabal-3.12.1.0.tar.gz
+sudo mv cabal /usr/local/bin
+```
+
+Ensure ghc and cabal are available in your PATH by running:
+```
+ghc --version
+cabal --version
+```
+
+Then build Vex:
+```bash
+git clone https://github.com/PeterGriffinSr/Vex.git
+cd Vex
+cabal build
+```
 ---
 
 # Your First Vex Program
