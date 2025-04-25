@@ -56,6 +56,8 @@ test-suite lexer-tests
   hs-source-dirs:      test
   main-is:             Spec.hs
   build-depends:       base ^>=4.18.3,
+                       parser-combinators,
+                       megaparsec,
                        Vex,
                        hspec
   default-language:    Haskell2010
@@ -78,6 +80,8 @@ executable Vex
 
     -- Other library packages from which modules are imported.
     build-depends:    base ^>=4.18.3,
+                      megaparsec,
+                      parser-combinators,
                       Vex,
                       hspec
 
@@ -88,7 +92,9 @@ executable Vex
     default-language: Haskell2010
 
 library
-  exposed-modules:     Token, Lexer, Error, Color
+  exposed-modules:     Token, Lexer, Error, Color, AST, Parser
   hs-source-dirs:      src
-  build-depends:       base ^>=4.18.3
+  build-depends:       base ^>=4.18.3, 
+                       megaparsec, 
+                       parser-combinators
   default-language:    Haskell2010
