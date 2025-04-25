@@ -17,8 +17,8 @@ main = do
         Right tokens -> do
           putStrLn "Tokens:"
           mapM_ print tokens
-          putStrLn "\nParsed expression:"
+          putStrLn "\nParsed expressions:"
           case parseExpr fileName src of
             Left errBundle -> handleParseError fileName src errBundle >> exitFailure
-            Right ast -> putStrLn (prettyExpr ast)
+            Right asts -> mapM_ (putStrLn . prettyExpr) asts
     _ -> putStrLn "Usage: Vex <filename>"

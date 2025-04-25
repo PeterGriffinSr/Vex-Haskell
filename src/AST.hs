@@ -2,6 +2,14 @@ module AST where
 
 type Name = String
 
+data TypeName
+  = TokInt
+  | TokFloat
+  | TokString
+  | TokChar
+  | TokBool
+  deriving (Show, Eq)
+
 data Expr
   = IntLit Integer
   | FloatLit Double
@@ -13,6 +21,7 @@ data Expr
   | BinaryOp String Expr Expr
   | Call Expr [Expr]
   | Parens Expr
+  | VarDecl (Maybe TypeName) String Expr
   deriving (Show, Eq)
 
 prettyExpr :: Expr -> String
@@ -33,3 +42,4 @@ prettyExprWithIndent indent expr =
         BinaryOp op l r -> ind ++ "BinaryOp " ++ op ++ "\n" ++ next l ++ "\n" ++ next r
         Call fn args -> ind ++ "Call\n" ++ next fn ++ concatMap (\a -> "\n" ++ next a) args
         Parens e -> ind ++ "Parens\n" ++ next e
+        VarDecl mty name rhs -> ind ++ "VarDecl " ++ name ++ maybe "" (\ty -> " : " ++ show ty) mty ++ "\n" ++ next rhs

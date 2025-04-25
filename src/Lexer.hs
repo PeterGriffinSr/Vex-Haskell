@@ -71,7 +71,7 @@ lexNumber filename fullSrc cs line col =
         1 -> do
           more <- lexer filename fullSrc rest line (col + length numPart)
           return (TokFloatLit (read numPart) : more)
-        _ -> Left $ "Invalid number with multiple dots: " ++ numPart ++ " at line " ++ show line ++ ", column " ++ show col
+        _ -> Left $ prettyError filename fullSrc line col "Invalid number with multiple dots"
 
 lexIdent :: String -> String -> String -> Int -> Int -> Either String [Token]
 lexIdent filename fullSrc cs line col =

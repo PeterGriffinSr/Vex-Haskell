@@ -50,18 +50,66 @@ pVar = Var <$> lexeme ((:) <$> letterChar <*> many alphaNumChar)
 pTerm :: Parser Expr
 pTerm = choice [try pFloat, pInt, pBool, pChar, pString, pVar, Parens <$> parens pExpr]
 
+pValDecl :: Parser Expr
+pValDecl = do
+  _ <- symbol "val"
+  typeAndName <- try typedWithColon <|> typedWithoutColon <|> untyped
+  _ <- symbol "="
+  rhs <- pExpr
+  case typeAndName of
+    (ty, name) -> return $ VarDecl ty name rhs
+  where
+    typedWithColon = do
+      ty <- typeName
+      _ <- symbol ":"
+      name <- lexeme identifier
+      return (Just ty, name)
+
+    typedWithoutColon = do
+      ty <- typeName
+      name <- lexeme identifier
+      return (Just ty, name)
+
+    untyped = do
+      name <- lexeme identifier
+      return (Nothing, name)
+
+parseKeyword :: String -> Parser String
+parseKeyword kw = symbol kw <* notFollowedBy alphaNumChar
+
+identifier :: Parser String
+identifier = (:) <$> letterChar <*> many alphaNumChar
+
 operatorTable :: [[Operator Parser Expr]]
 operatorTable =
-  [ [Prefix (UnaryOp "-" <$ symbol "-")],
-    [InfixL (BinaryOp "*" <$ symbol "*"), InfixL (BinaryOp "/" <$ symbol "/")],
-    [InfixL (BinaryOp "+" <$ symbol "+"), InfixL (BinaryOp "-" <$ symbol "-")]
+  [ [ InfixL (BinaryOp "*." <$ symbol "*."),
+      InfixL (BinaryOp "/." <$ symbol "/."),
+      InfixL (BinaryOp "*" <$ symbol "*"),
+      InfixL (BinaryOp "/" <$ symbol "/")
+    ],
+    [ InfixL (BinaryOp "+." <$ symbol "+."),
+      InfixL (BinaryOp "-." <$ symbol "-."),
+      InfixL (BinaryOp "+" <$ symbol "+"),
+      InfixL (BinaryOp "-" <$ symbol "-")
+    ],
+    [Prefix (UnaryOp "-" <$ symbol "-")]
   ]
+
+typeName :: Parser TypeName
+typeName =
+  choice
+    [ TokInt <$ parseKeyword "int",
+      TokFloat <$ parseKeyword "float",
+      TokString <$ parseKeyword "string",
+      TokChar <$ parseKeyword "char",
+      TokBool <$ parseKeyword "bool"
+    ]
 
 pExpr :: Parser Expr
 pExpr = makeExprParser pTerm operatorTable
 
-parseExpr :: String -> String -> Either (ParseErrorBundle String Void) Expr
-parseExpr filePath src = parse (sc *> pExpr <* eof) filePath src
+parseExpr :: String -> String -> Either (ParseErrorBundle String Void) [Expr]
+parseExpr filePath src = parse (sc *> sepEndBy1 (pValDecl <|> pExpr) sc <* eof) filePath src
 
 handleParseError :: String -> String -> ParseErrorBundle String Void -> IO ()
 handleParseError filePath src err = do

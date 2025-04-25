@@ -1,1 +1,5 @@
-1 * (5 + 6) - 3
+val int: x = 10
+val float: y = 5.5
+val string: a = "string"
+val char: c = 'c'
+val bool: b = true
