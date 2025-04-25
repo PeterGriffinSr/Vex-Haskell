@@ -23,6 +23,18 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Cache Haskell (GHC, Cabal, and store)
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cabal/store
+            ~/.ghcup
+            ~/.cabal/packages
+            ~/.ghc
+          key: ${{ runner.os }}-haskell-${{ hashFiles('**/*.cabal', 'cabal.project') }}
+          restore-keys: |
+            ${{ runner.os }}-haskell-
+
       - name: Set up Haskell
         uses: haskell/actions/setup@v2
         with:
