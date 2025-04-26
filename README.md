@@ -23,9 +23,11 @@ To start using Vex, follow these simple steps:
 | Architecture             | Linux | macOS | Windows |
 |--------------------------|:-----:|:-----:|:-------:|
 | `x86_64`                 | ✅    | ✅    | ✅      |
-| `x86`                    | ✅    | ⚠️    | ❌      |
+| `x86`                    | ✅    | ⚠️    | ⚠️      |
 | `aarch64`                | ✅    | ✅    | ❌      |
 
 > ⚠️ macOS support for x86 is experimental and may not work as expected.
-> ❌ x86 builds on Windows are technically possible, but explicitly unsupported.
+
+> ⚠️ x86 builds on Windows are technically possible, but explicitly unsupported.
+
 > ❌ aarch64 builds on Windows are unsupported.
