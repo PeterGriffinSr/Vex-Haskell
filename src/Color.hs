@@ -1,4 +1,4 @@
-module Color where
+module Color (red, blue, reset) where
 
 red :: String
 red = "\x1b[31m"

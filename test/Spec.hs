@@ -1,9 +1,9 @@
-import AST
+import AST (Expr (..), TypeName (..))
 import Control.Exception (evaluate)
-import Lexer
+import Lexer (lexer)
 import Parser (parseExpr)
 import Test.Hspec
-import Token
+import Token (Token (..))
 
 main :: IO ()
 main = hspec $ do

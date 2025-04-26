@@ -1,12 +1,49 @@
 module Parser (parseExpr, handleParseError) where
 
 import AST
+  ( Expr
+      ( BinaryOp,
+        BoolLit,
+        CharLit,
+        FloatLit,
+        IntLit,
+        Parens,
+        StringLit,
+        UnaryOp,
+        Var,
+        VarDecl
+      ),
+    TypeName (..),
+  )
 import Control.Monad.Combinators.Expr (Operator (..), makeExprParser)
 import Data.List.NonEmpty (NonEmpty ((:|)))
-import Data.Void
+import Data.Void (Void)
 import Error (prettyError)
 import Text.Megaparsec
+  ( MonadParsec (eof, notFollowedBy, try),
+    ParseErrorBundle (bundleErrors, bundlePosState),
+    Parsec,
+    SourcePos (sourceColumn, sourceLine),
+    anySingle,
+    attachSourcePos,
+    between,
+    choice,
+    empty,
+    errorOffset,
+    many,
+    manyTill,
+    parse,
+    parseErrorTextPretty,
+    sepEndBy1,
+    unPos,
+    (<|>),
+  )
 import Text.Megaparsec.Char
+  ( alphaNumChar,
+    char,
+    letterChar,
+    space1,
+  )
 import qualified Text.Megaparsec.Char.Lexer as L
 import Text.Megaparsec.Pos (sourceColumn, sourceLine)
 

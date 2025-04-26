@@ -1,1 +1,2 @@
-""
+val int: x = 10 + 3
+val int: y = 1

@@ -14,7 +14,7 @@ data Token
   | TokDiv
   | TokSemi
   | TokFPlus
-  | ToKFMinus
+  | TokFMinus
   | TokFMul
   | TokFDiv
   | TokLParen

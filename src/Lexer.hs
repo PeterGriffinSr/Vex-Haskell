@@ -1,9 +1,9 @@
 module Lexer (lexer) where
 
-import Data.Char
+import Data.Char (isAlpha, isDigit, isSpace)
 import Data.Maybe (listToMaybe)
 import Error (prettyError)
-import Token
+import Token (Token (..))
 
 lexer :: String -> String -> String -> Int -> Int -> Either String [Token]
 lexer file src [] _ _ = Right [TokEOF]
@@ -16,7 +16,7 @@ lexer file src (c : cs) l col
   | c == '#' = lexComment file src cs l
   | otherwise = case (c, cs) of
       ('-', '>' : r) -> tok TokArrow r 2
-      ('-', '.' : r) -> tok ToKFMinus r 2
+      ('-', '.' : r) -> tok TokFMinus r 2
       ('-', r) -> tok TokMinus r 1
       ('+', '.' : r) -> tok TokFPlus r 2
       ('+', r) -> tok TokPlus r 1

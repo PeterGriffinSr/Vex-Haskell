@@ -1,4 +1,4 @@
-module AST where
+module AST (prettyExpr, TypeName (..), Expr (..)) where
 
 type Name = String
 

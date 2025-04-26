@@ -1,6 +1,7 @@
 module Error where
 
-import Color
+import Color (blue, red, reset)
+import System.Exit (exitFailure)
 
 prettyError :: String -> String -> Int -> Int -> String -> String
 prettyError file src l c msg =
@@ -15,3 +16,14 @@ prettyError file src l c msg =
           blue ++ "    |  " ++ red ++ caret ++ reset,
           blue ++ "    |" ++ reset
         ]
+
+unrecognizedFlag :: String -> IO ()
+unrecognizedFlag flag = do
+  putStrLn $
+    "Vex: " ++ red ++ "error: " ++ reset ++ "unrecognized command-line option '" ++ flag ++ "'" ++ reset
+  exitFailure
+
+noInputFile :: IO ()
+noInputFile = do
+  putStrLn $ "Vex: " ++ red ++ "fatal error: " ++ reset ++ "no input files" ++ reset
+  exitFailure
