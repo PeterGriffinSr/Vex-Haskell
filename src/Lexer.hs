@@ -1,6 +1,7 @@
 module Lexer (lexer) where
 
 import Data.Char
+import Data.Maybe (listToMaybe)
 import Error (prettyError)
 import Token
 
@@ -87,14 +88,38 @@ lexString :: String -> String -> String -> Int -> Int -> Either String [Token]
 lexString file src cs l col =
   let (s, rest) = span (/= '"') cs
    in case rest of
-        ('"' : r) -> (TokStringLit s :) <$> lexer file src r l (col + length s + 2)
+        ('"' : r) ->
+          if null s
+            then Left $ prettyError file src l col "Empty string literal"
+            else
+              let (processedStr, errors) = processEscapes s
+               in if null errors
+                    then (TokStringLit processedStr :) <$> lexer file src r l (col + length s + 2)
+                    else Left $ prettyError file src l col ("Invalid escape sequence: " ++ head errors)
         _ -> Left $ prettyError file src l col "Unterminated string"
+
+processEscapes :: String -> (String, [String])
+processEscapes [] = ([], [])
+processEscapes ('\\' : c : cs) =
+  let (rest, errs) = processEscapes cs
+   in case c of
+        'n' -> ('\n' : rest, errs)
+        't' -> ('\t' : rest, errs)
+        'r' -> ('\r' : rest, errs)
+        '"' -> ('\"' : rest, errs)
+        '\\' -> ('\\' : rest, errs)
+        _ -> (rest, ["\\" ++ [c] ++ " is not a valid escape sequence"])
+processEscapes (c : cs) =
+  let (rest, errs) = processEscapes cs
+   in (c : rest, errs)
 
 lexChar :: String -> String -> String -> Int -> Int -> Either String [Token]
 lexChar file src cs l col =
   let (ch, rest) = span (/= '\'') cs
    in case rest of
-        ('\'' : r) -> (TokCharLit (head ch) :) <$> lexer file src r l (col + length ch + 2)
+        ('\'' : r) -> case listToMaybe ch of
+          Just c -> (TokCharLit c :) <$> lexer file src r l (col + length ch + 2)
+          Nothing -> Left $ prettyError file src l col "Empty character literal"
         _ -> Left $ prettyError file src l col "Unterminated character"
 
 lexComment :: String -> String -> String -> Int -> Either String [Token]

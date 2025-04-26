@@ -13,7 +13,7 @@ import Text.Megaparsec.Pos (sourceColumn, sourceLine)
 type Parser = Parsec Void String
 
 sc :: Parser ()
-sc = L.space space1 empty empty
+sc = L.space space1 (L.skipLineComment "#") empty
 
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme sc
@@ -52,7 +52,7 @@ pTerm = choice [try pFloat, pInt, pBool, pChar, pString, pVar, Parens <$> parens
 pValDecl :: Parser Expr
 pValDecl = do
   _ <- symbol "val"
-  typeAndName <- try typedWithColon <|> typedWithoutColon <|> untyped
+  typeAndName <- try typedWithColon
   _ <- symbol "="
   rhs <- pExpr
   case typeAndName of
@@ -63,15 +63,6 @@ pValDecl = do
       _ <- symbol ":"
       name <- lexeme identifier
       return (Just ty, name)
-
-    typedWithoutColon = do
-      ty <- typeName
-      name <- lexeme identifier
-      return (Just ty, name)
-
-    untyped = do
-      name <- lexeme identifier
-      return (Nothing, name)
 
 parseKeyword :: String -> Parser String
 parseKeyword kw = symbol kw <* notFollowedBy alphaNumChar

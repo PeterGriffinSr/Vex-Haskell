@@ -34,6 +34,21 @@ main = hspec $ do
     it "errors on unterminated char" $
       evaluate (lexerWrapper "'oops") `shouldThrow` anyErrorCall
 
+    it "errors on empty string literal" $
+      evaluate (lexerWrapper "\"\"") `shouldThrow` anyErrorCall
+
+    it "errors on empty character literal" $
+      evaluate (lexerWrapper "''") `shouldThrow` anyErrorCall
+
+    it "errors on invalid number with multiple dots" $
+      evaluate (lexerWrapper "3.14.15") `shouldThrow` anyErrorCall
+
+    it "errors on invalid escape sequence in string" $
+      evaluate (lexerWrapper "\"hello\\xworld\"") `shouldThrow` anyErrorCall
+
+    it "errors on unexpected character" $
+      evaluate (lexerWrapper "@") `shouldThrow` anyErrorCall
+
   describe "Parser" $ do
     it "parses a simple int val declaration" $
       parseWrapper "val int: x = 42"
