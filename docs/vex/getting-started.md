@@ -1,4 +1,4 @@
-# Getting started with Vex
+# Getting Started with Vex
 
 Welcome to Vex! This guide will help you install Vex, write your first program, and understand the basics to get up and running quickly.
 
@@ -6,92 +6,99 @@ Welcome to Vex! This guide will help you install Vex, write your first program, 
 
 ## Installation
 
-To install Vex, follow these steps:
+Follow these steps to install Vex:
 
-### Using Prebuilt Binaries (Recommended)
+### Option 1: Using Prebuilt Binaries (Recommended)
 1. Visit the [official Vex website](#) and download the latest release for your operating system.
-2. Extract the archive and add the `Vex` binary to your system's `PATH`.
+2. Extract the archive and add the `vex` binary to your system's `PATH`.
 
-### Building from Source
-If you prefer building from source:
+### Option 2: Building from Source
+If you prefer to build Vex from source, follow the instructions below:
 
-#### Linux/Windows (x86_64)
-We recommend using `ghcup`, the official Haskell toolchain installer.
+#### For Linux/Windows (x86_64)
+1. Install `ghcup`, the official Haskell toolchain installer, by visiting the [ghcup website](https://www.haskell.org/ghcup/) and following the installation guide.
+2. Clone the Vex repository and build the project:
+    ```bash
+    git clone https://github.com/PeterGriffinSr/Vex.git
+    cd Vex
+    cabal build
+    ```
 
-Visit the official [ghcup website](https://www.haskell.org/ghcup/) and follow the installation guide.
-
-once `ghcup` is installed:
+#### Special Instructions for x86 Windows Users
+If you're using an x86 Windows system, switch to the `x86-windows` branch before building:
 ```bash
-git clone https://github.com/PeterGriffinSr/Vex.git
-cd vex
-cabal build
+git checkout x86-windows
 ```
 
-#### Linux (i386)
-If you're on a 32-bit system, you can install the toolchain manually:
+#### For Linux (i386)
+If you're on a 32-bit Linux system, install the toolchain manually:
 
-##### Step 1: Install GHC
-Download and install GHC manually:
-```bash
-wget https://downloads.haskell.org/~ghc/9.6.7/ghc-9.6.7-i386-deb9-linux.tar.xz
-tar -xf ghc-9.6.7-i386-deb9-linux.tar.xz
-cd ghc-9.6.7
-./configure
-sudo make install
-```
+1. **Install GHC**:
+    ```bash
+    wget https://downloads.haskell.org/~ghc/9.6.7/ghc-9.6.7-i386-deb9-linux.tar.xz
+    tar -xf ghc-9.6.7-i386-deb9-linux.tar.xz
+    cd ghc-9.6.7
+    ./configure
+    sudo make install
+    ```
 
-##### Step 2: Install Cabal
-```bash
-wget https://downloads.haskell.org/~cabal/Cabal-3.12.1.0/
-tar -xf Cabal-3.12.1.0.tar.gz
-sudo mv cabal /usr/local/bin
-```
+2. **Install Cabal**:
+    ```bash
+    wget https://downloads.haskell.org/~cabal/Cabal-3.12.1.0/
+    tar -xf Cabal-3.12.1.0.tar.gz
+    sudo mv cabal /usr/local/bin
+    ```
 
-Ensure ghc and cabal are available in your PATH by running:
-```
-ghc --version
-cabal --version
-```
+3. Verify the installation:
+    ```bash
+    ghc --version
+    cabal --version
+    ```
 
-Then build Vex:
-```bash
-git clone https://github.com/PeterGriffinSr/Vex.git
-cd Vex
-cabal build
-```
----
-
-# Your First Vex Program
-Create a file called `main.vex` with the following content:
-```
-val () -> int: main fn () =>
-    print<string> "Hello, world";
-    0;
-```
-To compile and run:
-```
-vex main.vex -o hello
-./hello
-```
+4. Build Vex:
+    ```bash
+    git clone https://github.com/PeterGriffinSr/Vex.git
+    cd Vex
+    cabal build
+    ```
 
 ---
 
-# Running the REPL
-You can experiment with Vex interactively using the REPL:
-```
+## Writing Your First Vex Program
+
+1. Create a file named `main.vex` with the following content:
+    ```vex
+    val () -> int: main fn () =>
+         print<string> "Hello, world";
+         0;
+    ```
+
+2. Compile and run the program:
+    ```bash
+    vex main.vex -o hello
+    ./hello
+    ```
+
+---
+
+## Using the REPL
+
+Experiment with Vex interactively using the REPL:
+```bash
 vex repl
 ```
 
-Try this:
-```
-> val (int) -> int: sqaure fn (x) => x * x;
-> sqaure(4);
+For example:
+```vex
+> val (int) -> int: square fn (x) => x * x;
+> square(4);
 > 16
 ```
 
 ---
 
-# What's Next?
-Now that you’re set up, explore the rest of the documentation:
+## What's Next?
+
+Now that you’re set up, explore more about Vex:
 - [Syntax Overview](/docs/vex/syntax.md)
 - [Type System](/docs/vex/type-system.md)
