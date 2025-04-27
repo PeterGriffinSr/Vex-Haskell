@@ -30,7 +30,7 @@ import Text.Megaparsec.Char
   )
 import qualified Text.Megaparsec.Char.Lexer as L
 import Text.Megaparsec.Pos (sourceColumn, sourceLine)
-import Vex.Core.AST
+import Vex.Compiler.AST
   ( Expr
       ( BinaryOp,
         BoolLit,

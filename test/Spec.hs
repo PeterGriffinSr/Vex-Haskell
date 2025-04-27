@@ -1,9 +1,17 @@
-import AST (Expr (..), TypeName (..))
 import Control.Exception (evaluate)
-import Lexer (lexer)
-import Parser (parseExpr)
 import Test.Hspec
-import Token (Token (..))
+  ( anyErrorCall,
+    describe,
+    hspec,
+    it,
+    shouldBe,
+    shouldThrow,
+  )
+import qualified Vex.Compiler.AST as Core
+import Vex.Compiler.Lexer (lexer)
+import Vex.Compiler.Parser (parseExpr)
+import Vex.Compiler.Token (Token (..))
+import qualified Vex.Compiler.Token as Token
 
 main :: IO ()
 main = hspec $ do
@@ -52,15 +60,15 @@ main = hspec $ do
   describe "Parser" $ do
     it "parses a simple int val declaration" $
       parseWrapper "val int: x = 42"
-        `shouldBe` [VarDecl (Just AST.TokInt) "x" (IntLit 42)]
+        `shouldBe` [Core.VarDecl (Just Core.TokInt) "x" (Core.IntLit 42)]
 
     it "parses a float expression" $
       parseWrapper "3.0 +. 1.5"
-        `shouldBe` [BinaryOp "+." (FloatLit 3.0) (FloatLit 1.5)]
+        `shouldBe` [Core.BinaryOp "+." (Core.FloatLit 3.0) (Core.FloatLit 1.5)]
 
     it "parses nested parentheses" $
       parseWrapper "(1 + 2) * 3"
-        `shouldBe` [BinaryOp "*" (Parens (BinaryOp "+" (IntLit 1) (IntLit 2))) (IntLit 3)]
+        `shouldBe` [Core.BinaryOp "*" (Core.Parens (Core.BinaryOp "+" (Core.IntLit 1) (Core.IntLit 2))) (Core.IntLit 3)]
 
 lexerWrapper :: String -> [Token]
 lexerWrapper src =
@@ -68,7 +76,7 @@ lexerWrapper src =
     Left err -> error err
     Right toks -> init toks
 
-parseWrapper :: String -> [Expr]
+parseWrapper :: String -> [Core.Expr]
 parseWrapper src =
   case parseExpr "test.vex" src of
     Left err -> error (show err)

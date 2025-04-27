@@ -7,9 +7,9 @@ import qualified Data.Map as Map (Map, fromList, lookup, member)
 import Data.Maybe (fromMaybe)
 import System.Exit (exitFailure)
 import Vex.CLI.Help (displayCompilerHelp, displayGeneral, displayOptimizersHelp, displayTargetHelp, displayVersion, displayWarningsHelp)
+import Vex.Compiler.AST (prettyExpr)
 import Vex.Compiler.Lexer (lexer)
 import Vex.Compiler.Parser (handleParseError, parseExpr)
-import Vex.Core.AST (prettyExpr)
 import Vex.Core.Error (noInputFile, unrecognizedFlag)
 
 data CompileMode = EmitTokens | EmitAst | DefaultMode
