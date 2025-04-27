@@ -1,7 +1,7 @@
-module Error where
+module Vex.Core.Error where
 
-import Color (blue, red, reset)
 import System.Exit (exitFailure)
+import Vex.CLI.Color (blue, red, reset)
 
 prettyError :: String -> String -> Int -> Int -> String -> String
 prettyError file src l c msg =

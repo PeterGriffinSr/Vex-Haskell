@@ -1,4 +1,4 @@
-module Help where
+module Vex.CLI.Help where
 
 import Data.Version (showVersion)
 import Paths_Vex (version)

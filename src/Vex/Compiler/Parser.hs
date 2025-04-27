@@ -1,24 +1,8 @@
-module Parser (parseExpr, handleParseError) where
+module Vex.Compiler.Parser (parseExpr, handleParseError) where
 
-import AST
-  ( Expr
-      ( BinaryOp,
-        BoolLit,
-        CharLit,
-        FloatLit,
-        IntLit,
-        Parens,
-        StringLit,
-        UnaryOp,
-        Var,
-        VarDecl
-      ),
-    TypeName (..),
-  )
 import Control.Monad.Combinators.Expr (Operator (..), makeExprParser)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.Void (Void)
-import Error (prettyError)
 import Text.Megaparsec
   ( MonadParsec (eof, notFollowedBy, try),
     ParseErrorBundle (bundleErrors, bundlePosState),
@@ -46,6 +30,22 @@ import Text.Megaparsec.Char
   )
 import qualified Text.Megaparsec.Char.Lexer as L
 import Text.Megaparsec.Pos (sourceColumn, sourceLine)
+import Vex.Core.AST
+  ( Expr
+      ( BinaryOp,
+        BoolLit,
+        CharLit,
+        FloatLit,
+        IntLit,
+        Parens,
+        StringLit,
+        UnaryOp,
+        Var,
+        VarDecl
+      ),
+    TypeName (..),
+  )
+import Vex.Core.Error (prettyError)
 
 type Parser = Parsec Void String
 

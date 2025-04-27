@@ -1,9 +1,9 @@
-module Lexer (lexer) where
+module Vex.Compiler.Lexer (lexer) where
 
 import Data.Char (isAlpha, isDigit, isSpace)
 import Data.Maybe (listToMaybe)
-import Error (prettyError)
-import Token (Token (..))
+import Vex.Compiler.Token (Token (..))
+import Vex.Core.Error (prettyError)
 
 lexer :: String -> String -> String -> Int -> Int -> Either String [Token]
 lexer file src [] _ _ = Right [TokEOF]

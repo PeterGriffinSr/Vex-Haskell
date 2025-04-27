@@ -1,6 +1,6 @@
-import Compiler (handleArgs)
-import Error (noInputFile)
 import System.Environment (getArgs)
+import Vex.Compiler.Compiler (handleArgs)
+import Vex.Core.Error (noInputFile)
 import Prelude (IO)
 
 main :: IO ()

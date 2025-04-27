@@ -1,4 +1,4 @@
-module AST (prettyExpr, TypeName (..), Expr (..)) where
+module Vex.Core.AST (prettyExpr, TypeName (..), Expr (..)) where
 
 type Name = String
 

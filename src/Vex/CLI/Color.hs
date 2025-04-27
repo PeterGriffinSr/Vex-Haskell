@@ -1,4 +1,4 @@
-module Color (red, blue, reset) where
+module Vex.CLI.Color (red, blue, reset) where
 
 red :: String
 red = "\x1b[31m"

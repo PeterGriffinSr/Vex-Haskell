@@ -6,11 +6,11 @@ Thumbs.db
 *~
 *#
 *.swp
-*.sh
 #*#
 
 # === Build system caches ===
 .cache/
 .deps/
 .vscode/
+scripts/
 dist-newstyle/

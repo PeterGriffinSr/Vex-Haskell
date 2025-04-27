@@ -1,16 +1,16 @@
-module Compiler (handleArgs) where
+module Vex.Compiler.Compiler (handleArgs) where
 
-import AST (prettyExpr)
 import Control.Exception (IOException, catch)
 import Control.Monad (when)
 import Data.List (find, isPrefixOf, partition)
 import qualified Data.Map as Map (Map, fromList, lookup, member)
 import Data.Maybe (fromMaybe)
-import Error (noInputFile, unrecognizedFlag)
-import Help (displayCompilerHelp, displayGeneral, displayOptimizersHelp, displayTargetHelp, displayVersion, displayWarningsHelp)
-import Lexer (lexer)
-import Parser (handleParseError, parseExpr)
 import System.Exit (exitFailure)
+import Vex.CLI.Help (displayCompilerHelp, displayGeneral, displayOptimizersHelp, displayTargetHelp, displayVersion, displayWarningsHelp)
+import Vex.Compiler.Lexer (lexer)
+import Vex.Compiler.Parser (handleParseError, parseExpr)
+import Vex.Core.AST (prettyExpr)
+import Vex.Core.Error (noInputFile, unrecognizedFlag)
 
 data CompileMode = EmitTokens | EmitAst | DefaultMode
 

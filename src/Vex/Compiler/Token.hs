@@ -1,4 +1,4 @@
-module Token where
+module Vex.Compiler.Token where
 
 data Token
   = TokIntLit Int
