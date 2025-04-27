@@ -55,31 +55,28 @@ orExit (Right val) f = f val
 handleArgs :: [String] -> IO ()
 handleArgs args = do
   let (flags, files) = partition isFlag args
-  case find (`Map.member` commandTable) flags of
+  case find (\f -> Map.member f commandTable && f /= "--emit-ast" && f /= "--emit-tokens") flags of
     Just flag -> do
-      fromMaybe (putStrLn "Unrecognized flag" >> exitFailure) (Map.lookup flag commandTable)
-    Nothing -> case files of
-      [file] -> do
-        let emitTokens = "--emit-tokens" `elem` flags
-        let emitAst = "--emit-ast" `elem` flags
-        result <- safeReadFile file
-        result `orExit` \src -> do
-          when emitTokens $ do
-            lexer file src src 1 1 `orExit` \tokens -> do
-              putStrLn "Tokens:"
-              mapM_ print tokens
-          when emitAst $ do
-            case parseExpr file src of
-              Left parseErr -> handleParseError file src parseErr
-              Right asts -> do
-                putStrLn "Parsed expressions:"
-                mapM_ (putStrLn . prettyExpr) asts
-          when (not emitTokens && not emitAst) $
-            compileFile DefaultMode file
-      [] -> noInputFile
-      _ -> do
-        putStrLn "Error: Multiple files provided. Vex only supports one file at a time."
-        exitFailure
+      case Map.lookup flag commandTable of
+        Just action -> action
+        Nothing -> unrecognizedFlag flag
+    Nothing -> do
+      case find (\f -> not (Map.member f commandTable) && f /= "--emit-ast" && f /= "--emit-tokens") flags of
+        Just unrecognized -> unrecognizedFlag unrecognized
+        Nothing -> case files of
+          [file] -> do
+            let emitTokens = "--emit-tokens" `elem` flags
+            let emitAst = "--emit-ast" `elem` flags
+            if emitTokens
+              then compileFile EmitTokens file
+              else
+                if emitAst
+                  then compileFile EmitAst file
+                  else compileFile DefaultMode file
+          [] -> noInputFile
+          _ -> do
+            putStrLn "Error: Multiple files provided. Vex only supports one file at a time."
+            exitFailure
 
 prefixOf :: String -> String -> Bool
 prefixOf = isPrefixOf

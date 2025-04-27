@@ -95,7 +95,9 @@ lexString file src cs l col =
               let (processedStr, errors) = processEscapes s
                in if null errors
                     then (TokStringLit processedStr :) <$> lexer file src r l (col + length s + 2)
-                    else Left $ prettyError file src l col ("Invalid escape sequence: " ++ head errors)
+                    else case listToMaybe errors of
+                      Just err -> Left $ prettyError file src l col ("Invalid escape sequence: " ++ err)
+                      Nothing -> Left $ prettyError file src l col "Unknown escape sequence error"
         _ -> Left $ prettyError file src l col "Unterminated string"
 
 processEscapes :: String -> (String, [String])

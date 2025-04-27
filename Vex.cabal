@@ -21,7 +21,14 @@ source-repository head
   location: https://github.com/PeterGriffinSr/Vex
 
 common warnings
-  ghc-options: -Wall
+  ghc-options:
+    -Wall -Wcompat -Wimplicit-prelude -Wunsafe -Wmissing-export-lists
+    -Wmissing-pattern-synonym-signatures -Wmissing-home-modules
+    -Wmissing-local-signatures -Werror=missing-signatures
+    -Werror=unused-imports -Werror=unused-matches
+    -Werror=incomplete-patterns -Werror=incomplete-uni-patterns
+    -Werror=incomplete-record-updates -Werror=missing-import-lists
+    -Werror=deprecations -Werror=all-missed-specializations
 
 library
   exposed-modules:
