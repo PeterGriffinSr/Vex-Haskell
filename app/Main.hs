@@ -1,11 +1,11 @@
 import System.Environment (getArgs)
-import Vex.Compiler.Compiler (handleArgs)
+import Vex.CLI.Cli (handleArgs)
 import Vex.Core.Error (noInputFile)
-import Prelude (IO)
+import Prelude (IO, null, (>>=))
 
 main :: IO ()
-main = do
-  args <- getArgs
-  case args of
-    [] -> noInputFile
-    _ -> handleArgs args
+main =
+  getArgs >>= \args ->
+    if null args
+      then noInputFile
+      else handleArgs

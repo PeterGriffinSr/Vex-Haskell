@@ -45,7 +45,18 @@ lexer file src (c : cs) l col
       (';', r) -> tok TokSemi r 1
       (',', r) -> tok TokComma r 1
       ('_', r) -> tok TokUnderScore r 1
-      _ -> Left $ prettyError file src l col "Unexpected character"
+      _ ->
+        Left $
+          prettyError
+            file
+            src
+            l
+            col
+            "Unexpected character"
+            [ "This character does not belong to the lexer's terminal alphabet Σ",
+              "Lexing requires all characters to be members of a known lexical class",
+              "Ensure the source string ∈ L, the language defined by the Vex grammar"
+            ]
   where
     tok t rest n = (t :) <$> lexer file src rest l (col + n)
 
@@ -56,7 +67,18 @@ lexNumber file src cs l col =
    in case dots of
         0 -> (TokIntLit (read n) :) <$> lexer file src rest l (col + length n)
         1 -> (TokFloatLit (read n) :) <$> lexer file src rest l (col + length n)
-        _ -> Left $ prettyError file src l col "Invalid number with multiple dots"
+        _ ->
+          Left $
+            prettyError
+              file
+              src
+              l
+              col
+              "Invalid number with multiple dots"
+              [ "A numeric literal must conform to: Int | Int.Float",
+                "Multiple decimal points introduce ambiguity in the token stream",
+                "Lexer invariant: ∃! '.' in any floating-point token"
+              ]
 
 lexIdent :: String -> String -> String -> Int -> Int -> Either String [Token]
 lexIdent file src cs l col =
@@ -90,15 +112,55 @@ lexString file src cs l col =
    in case rest of
         ('"' : r) ->
           if null s
-            then Left $ prettyError file src l col "Empty string literal"
+            then
+              Left $
+                prettyError
+                  file
+                  src
+                  l
+                  col
+                  "Empty string literal"
+                  [ "While allowed (\"\" ∈ String), empty strings may be unintended",
+                    "Consider: did you mean to write a nonempty string?"
+                  ]
             else
               let (processedStr, errors) = processEscapes s
                in if null errors
                     then (TokStringLit processedStr :) <$> lexer file src r l (col + length s + 2)
                     else case listToMaybe errors of
-                      Just err -> Left $ prettyError file src l col ("Invalid escape sequence: " ++ err)
-                      Nothing -> Left $ prettyError file src l col "Unknown escape sequence error"
-        _ -> Left $ prettyError file src l col "Unterminated string"
+                      Just err ->
+                        Left $
+                          prettyError
+                            file
+                            src
+                            l
+                            col
+                            ("Invalid escape sequence: " ++ err)
+                            [ "The lexer accepts Σ_escape = {'\\n', '\\t', '\\r', '\\\"', '\\\\'}",
+                              "Escape sequences must match elements of Σ_escape"
+                            ]
+                      Nothing ->
+                        Left $
+                          prettyError
+                            file
+                            src
+                            l
+                            col
+                            "Unknown string escape error"
+                            [ "Escape processing failed unexpectedly",
+                              "Please check the string syntax and escape structure"
+                            ]
+        _ ->
+          Left $
+            prettyError
+              file
+              src
+              l
+              col
+              "Unterminated string"
+              [ "Reached end of input without encountering a closing quote (\")",
+                "A string literal must conform to: '\"' Σ* '\"'"
+              ]
 
 processEscapes :: String -> (String, [String])
 processEscapes [] = ([], [])
@@ -110,7 +172,7 @@ processEscapes ('\\' : c : cs) =
         'r' -> ('\r' : rest, errs)
         '"' -> ('\"' : rest, errs)
         '\\' -> ('\\' : rest, errs)
-        _ -> (rest, ["\\" ++ [c] ++ " is not a valid escape sequence"])
+        _ -> (rest, ["\\" ++ [c] ++ " ∉ Σ_escape"])
 processEscapes (c : cs) =
   let (rest, errs) = processEscapes cs
    in (c : rest, errs)
@@ -121,8 +183,28 @@ lexChar file src cs l col =
    in case rest of
         ('\'' : r) -> case listToMaybe ch of
           Just c -> (TokCharLit c :) <$> lexer file src r l (col + length ch + 2)
-          Nothing -> Left $ prettyError file src l col "Empty character literal"
-        _ -> Left $ prettyError file src l col "Unterminated character"
+          Nothing ->
+            Left $
+              prettyError
+                file
+                src
+                l
+                col
+                "Empty character literal"
+                [ "A character literal must encode exactly one Unicode scalar value",
+                  "Form: '\'' c '\'' for some c ∈ Char"
+                ]
+        _ ->
+          Left $
+            prettyError
+              file
+              src
+              l
+              col
+              "Unterminated character"
+              [ "Lexical invariant violated: expected closing quote (')",
+                "A character literal must match the regular expression: '\'' . '\''"
+              ]
 
 lexComment :: String -> String -> String -> Int -> Either String [Token]
 lexComment file src cs l = lexer file src (dropWhile (/= '\n') cs) (l + 1) 1

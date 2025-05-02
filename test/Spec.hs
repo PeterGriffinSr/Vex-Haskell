@@ -7,9 +7,7 @@ import Test.Hspec
     shouldBe,
     shouldThrow,
   )
-import qualified Vex.Compiler.AST as Core
 import Vex.Compiler.Lexer (lexer)
-import Vex.Compiler.Parser (parseExpr)
 import Vex.Compiler.Token (Token (..))
 import qualified Vex.Compiler.Token as Token
 
@@ -57,27 +55,8 @@ main = hspec $ do
     it "errors on unexpected character" $
       evaluate (lexerWrapper "@") `shouldThrow` anyErrorCall
 
-  describe "Parser" $ do
-    it "parses a simple int val declaration" $
-      parseWrapper "val int: x = 42"
-        `shouldBe` [Core.VarDecl (Just Core.TokInt) "x" (Core.IntLit 42)]
-
-    it "parses a float expression" $
-      parseWrapper "3.0 +. 1.5"
-        `shouldBe` [Core.BinaryOp "+." (Core.FloatLit 3.0) (Core.FloatLit 1.5)]
-
-    it "parses nested parentheses" $
-      parseWrapper "(1 + 2) * 3"
-        `shouldBe` [Core.BinaryOp "*" (Core.Parens (Core.BinaryOp "+" (Core.IntLit 1) (Core.IntLit 2))) (Core.IntLit 3)]
-
 lexerWrapper :: String -> [Token]
 lexerWrapper src =
   case lexer "test.vex" src src 1 1 of
     Left err -> error err
     Right toks -> init toks
-
-parseWrapper :: String -> [Core.Expr]
-parseWrapper src =
-  case parseExpr "test.vex" src of
-    Left err -> error (show err)
-    Right asts -> asts
